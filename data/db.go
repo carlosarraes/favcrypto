@@ -22,7 +22,7 @@ type Currency struct {
 
 type Currencies []Currency
 
-func GetDataFromDB() Currencies {
+func ConnectToDB() *sql.DB {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalf("Error loading .env file: %q", err)
@@ -34,7 +34,6 @@ func GetDataFromDB() Currencies {
 	if err != nil {
 		log.Fatalf("Error opening database: %q", err)
 	}
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
@@ -42,6 +41,12 @@ func GetDataFromDB() Currencies {
 	}
 
 	fmt.Println("Successfully connected to the database!")
+
+	return db
+}
+
+func GetDataFromDB() Currencies {
+	db := ConnectToDB()
 
 	rows, err := db.Query("SELECT * FROM Currency.data")
 	if err != nil {
@@ -63,27 +68,11 @@ func GetDataFromDB() Currencies {
 		log.Fatalf("Error reading database rows: %q", err)
 	}
 
+	fmt.Println("Successfully fetched data from the database!")
 	return currencies
 }
 
 func UpdateDataInDB(currencies Currencies) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file: %q", err)
-	}
-
-	dbURL := os.Getenv("DATABASE_URL")
-	db, err := sql.Open("postgres", dbURL)
-	if err != nil {
-		log.Fatalf("Error opening database: %q", err)
-	}
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		log.Fatalf("Error pinging database: %q", err)
-	}
-
 	tickersData, err := services.FetchData()
 	if err != nil {
 		log.Fatalf("Error fetching data: %q", err)
@@ -101,6 +90,7 @@ func UpdateDataInDB(currencies Currencies) {
 		}
 	}
 
+	db := ConnectToDB()
 	for _, currency := range currencies {
 		priceStr, ok := newTickerPrices[currency.Symbol]
 		if !ok {
