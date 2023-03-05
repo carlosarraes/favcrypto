@@ -12,43 +12,28 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type Currency struct {
-	ID       int
-	Favorite bool
-	Name     string
-	Symbol   string
-	Price    float64
+type DbClient struct {
+	*sql.DB
 }
 
-type Currencies []Currency
+var DB DbClient
 
-func ConnectToDB() *sql.DB {
-	err := godotenv.Load()
-	if err != nil {
+func (d DbClient) InitDB() {
+	if err := godotenv.Load(); err != nil {
 		log.Fatalf("Error loading .env file: %q", err)
 	}
 
-	dbURL := os.Getenv("DATABASE_URL")
-
-	db, err := sql.Open("postgres", dbURL)
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatalf("Error opening database: %q", err)
 	}
 
-	err = db.Ping()
-	if err != nil {
-		log.Fatalf("Error pinging database: %q", err)
-	}
-
 	fmt.Println("Successfully connected to the database!")
-
-	return db
+	DB = DbClient{db}
 }
 
-func GetDataFromDB() Currencies {
-	db := ConnectToDB()
-
-	rows, err := db.Query("SELECT * FROM Currency.data")
+func (d DbClient) GetDataFromDB() Currencies {
+	rows, err := DB.Query("SELECT * FROM Currency.data")
 	if err != nil {
 		log.Fatalf("Error querying database: %q", err)
 	}
@@ -57,10 +42,10 @@ func GetDataFromDB() Currencies {
 	currencies := Currencies{}
 	for rows.Next() {
 		var currency Currency
-		err := rows.Scan(&currency.ID, &currency.Favorite, &currency.Name, &currency.Symbol, &currency.Price)
-		if err != nil {
+		if err := rows.Scan(&currency.ID, &currency.Favorite, &currency.Name, &currency.Symbol, &currency.Price); err != nil {
 			log.Fatalf("Error scanning database rows: %q", err)
 		}
+
 		currencies = append(currencies, currency)
 	}
 
@@ -72,7 +57,7 @@ func GetDataFromDB() Currencies {
 	return currencies
 }
 
-func UpdateDataInDB(currencies Currencies) {
+func (d DbClient) UpdatePrices(currencies Currencies) {
 	tickersData, err := services.FetchData()
 	if err != nil {
 		log.Fatalf("Error fetching data: %q", err)
@@ -90,7 +75,6 @@ func UpdateDataInDB(currencies Currencies) {
 		}
 	}
 
-	db := ConnectToDB()
 	for _, currency := range currencies {
 		priceStr, ok := newTickerPrices[currency.Symbol]
 		if !ok {
@@ -102,10 +86,30 @@ func UpdateDataInDB(currencies Currencies) {
 			log.Fatalf("Error converting price to float: %q", err)
 		}
 
-		_, err = db.Exec("UPDATE Currency.data SET price = $1 WHERE symbol = $2", price, currency.Symbol)
+		_, err = DB.Exec("UPDATE Currency.data SET price = $1 WHERE symbol = $2", price, currency.Symbol)
 		if err != nil {
 			log.Fatalf("Error updating database: %q", err)
 		}
 	}
 	fmt.Println("Successfully updated the database!")
+}
+
+func (d DbClient) UpdateFavorite(b bool, s string) int64 {
+	res, err := DB.Exec("UPDATE Currency.data SET favorite = $1 WHERE symbol = $2", b, s)
+	if err != nil {
+		log.Fatalf("Error updating database: %q", err)
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		log.Fatalf("Error getting rows affected: %q", err)
+	}
+
+	info := "Successfully"
+	if rowsAffected == 0 {
+		info = "Unsuccessfully"
+	}
+
+	fmt.Printf("%s updated %d row(s) for %s value to %t\n", info, rowsAffected, s, b)
+	return rowsAffected
 }
