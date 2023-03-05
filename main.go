@@ -6,18 +6,28 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 func init() {
-	currencies := data.GetDataFromDB()
-	data.UpdateDataInDB(currencies)
+	data.DB.InitDB()
+	currencies := data.DB.GetDataFromDB()
+	data.DB.UpdatePrices(currencies)
 }
 
 func main() {
-	http.HandleFunc("/", handlers.HandleRequest)
-	fmt.Println("Server is running on port 8080")
-	err := http.ListenAndServe(":8080", nil)
-	if err != nil {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	http.HandleFunc("/upvote/", handlers.HandleUpvote)
+	http.HandleFunc("/getcoins/", handlers.HandleRequest)
+	http.HandleFunc("/", handlers.HandleHealth)
+
+	fmt.Printf("Server is running on port %s\n", port)
+
+	if err := http.ListenAndServe(port, nil); err != nil {
 		log.Fatalf("Error starting server: %q", err)
 	}
 }
