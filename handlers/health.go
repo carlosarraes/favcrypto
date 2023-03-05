@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func HandleHealth(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) HandleHealth(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		w.Header().Set("Content-Type", "text/plain")

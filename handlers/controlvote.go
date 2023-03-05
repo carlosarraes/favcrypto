@@ -1,15 +1,14 @@
 package handlers
 
 import (
-	"favcrypto/data"
 	"fmt"
 	"net/http"
 	"strings"
 )
 
-func HandleUpvote(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) HandleUpvote(w http.ResponseWriter, r *http.Request) {
 	path := strings.TrimPrefix(r.URL.Path, "/upvote/")
-	check := data.DB.UpdateFavorite(true, strings.ToUpper(path))
+	check := h.db.UpdateFavorite(true, strings.ToUpper(path))
 
 	switch r.Method {
 	case http.MethodPatch:

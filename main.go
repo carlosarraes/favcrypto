@@ -21,9 +21,11 @@ func main() {
 		port = "8080"
 	}
 
-	http.HandleFunc("/upvote/", handlers.HandleUpvote)
-	http.HandleFunc("/getcoins/", handlers.HandleRequest)
-	http.HandleFunc("/", handlers.HandleHealth)
+	h := handlers.NewHandlers(&data.DB)
+
+	http.HandleFunc("/upvote/", h.HandleUpvote)
+	http.HandleFunc("/getcoins/", h.HandleRequest)
+	http.HandleFunc("/", h.HandleHealth)
 
 	fmt.Printf("Server is running on port%s\n", port)
 

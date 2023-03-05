@@ -2,14 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
-	"favcrypto/data"
 	"fmt"
 	"log"
 	"net/http"
 )
 
-func HandleRequest(w http.ResponseWriter, r *http.Request) {
-	currencies := data.DB.GetDataFromDB()
+func (h *Handlers) HandleRequest(w http.ResponseWriter, r *http.Request) {
+	currencies := h.db.GetDataFromDB()
 	currenciesData := currencies.ToCurrenciesData()
 
 	var jsonData []byte
