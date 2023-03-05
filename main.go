@@ -18,7 +18,7 @@ func init() {
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = ":8080"
 	}
 
 	h := handlers.NewHandlers(&data.DB)
