@@ -2,7 +2,7 @@ package data
 
 import (
 	"database/sql"
-	"favcrypto/services"
+	"favcrypto/utils"
 	"fmt"
 	"log"
 	"os"
@@ -58,17 +58,17 @@ func (d DbClient) GetDataFromDB() Currencies {
 }
 
 func (d DbClient) UpdatePrices(currencies Currencies) {
-	tickersData, err := services.FetchData()
+	tickersData, err := utils.FetchData()
 	if err != nil {
 		log.Fatalf("Error fetching data: %q", err)
 	}
 
-	newTickersData, err := services.CleanUpData(tickersData)
+	newTickersData, err := utils.CleanUpData(tickersData)
 	if err != nil {
 		log.Fatalf("Error cleaning up data: %q", err)
 	}
 
-	newTickerPrices := make(services.MapPrice)
+	newTickerPrices := make(utils.MapPrice)
 	for _, data := range newTickersData {
 		for key, value := range data {
 			newTickerPrices[key] = value
