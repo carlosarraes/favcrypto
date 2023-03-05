@@ -17,7 +17,7 @@ func HandleUpvote(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, `{"message": "Upvoted"}`)
 	} else {
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprintf(w, `{"message": "Invalid coin"}`)
 	}
 
