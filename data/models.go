@@ -1,21 +1,21 @@
 package data
 
 type Currency struct {
-	ID       int
-	Favorite bool
-	Name     string
-	Symbol   string
-	Price    float64
+	ID      int
+	Upvotes int
+	Name    string
+	Symbol  string
+	Price   float64
 }
 
 type Currencies []Currency
 
 type CurrencyData struct {
-	ID       int     `json:"id"`
-	Favorite bool    `json:"favorite"`
-	Name     string  `json:"name"`
-	Symbol   string  `json:"symbol"`
-	Price    float64 `json:"price"`
+	ID      int     `json:"id"`
+	Upvotes int     `json:"upvotes"`
+	Name    string  `json:"name"`
+	Symbol  string  `json:"symbol"`
+	Price   float64 `json:"price"`
 }
 
 type CurrenciesData []CurrencyData

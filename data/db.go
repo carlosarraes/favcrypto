@@ -42,7 +42,7 @@ func (d DbClient) GetDataFromDB() Currencies {
 	currencies := Currencies{}
 	for rows.Next() {
 		var currency Currency
-		if err := rows.Scan(&currency.ID, &currency.Favorite, &currency.Name, &currency.Symbol, &currency.Price); err != nil {
+		if err := rows.Scan(&currency.ID, &currency.Upvotes, &currency.Name, &currency.Symbol, &currency.Price); err != nil {
 			log.Fatalf("Error scanning database rows: %q", err)
 		}
 
@@ -94,8 +94,8 @@ func (d DbClient) UpdatePrices(currencies Currencies) {
 	fmt.Println("Successfully updated the database!")
 }
 
-func (d DbClient) UpdateFavorite(b bool, s string) int64 {
-	res, err := DB.Exec("UPDATE Currency.data SET favorite = $1 WHERE symbol = $2", b, s)
+func (d DbClient) UpdateFavorite(s string) int64 {
+	res, err := DB.Exec("UPDATE Currency.data SET upvotes = upvotes + 1 WHERE symbol = $1", s)
 	if err != nil {
 		log.Fatalf("Error updating database: %q", err)
 	}
@@ -110,6 +110,6 @@ func (d DbClient) UpdateFavorite(b bool, s string) int64 {
 		info = "Unsuccessfully"
 	}
 
-	fmt.Printf("%s updated %d row(s) for %s value to %t\n", info, rowsAffected, s, b)
+	fmt.Printf("%s updated %d row(s) for %s value\n", info, rowsAffected, s)
 	return rowsAffected
 }
