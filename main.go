@@ -20,7 +20,6 @@ func main() {
 	h := handlers.NewHandlers(&data.DB)
 
 	http.HandleFunc("/upvote/", handleCORS(h.HandleUpvote))
-	http.HandleFunc("/downvote/", handleCORS(h.HandleDownvote))
 	http.HandleFunc("/getcoins/", handleCORS(h.HandleRequest))
 	http.HandleFunc("/", handleCORS(h.HandleHealth))
 
