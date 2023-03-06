@@ -26,7 +26,7 @@ CREATE TABLE Currency.data(
 INSERT INTO Currency.data
   (upvotes, name, symbol, price)
 VALUES
-  (1, 'Klever', 'KLV', 0),
+  (0, 'Klever', 'KLV', 0),
   (0, 'Bitcoin', 'BTC', 0),
   (0, 'Ethereum', 'ETH', 0),
   (0, 'Enjin', 'ENJ', 0),
