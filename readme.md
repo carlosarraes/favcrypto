@@ -2,7 +2,7 @@
 
 ##### Readme in pt-br can be found [here](https://github.com/carlosarraes/favcrypto/blob/main/readme-pt.md)
 
-Fav Crypto is a stateless API written in native Golang (without packages) that allows users to upvote their favorite cryptocurrency. It has a containerized Postgres database, making data persistent. You can check the documentation at https://fcdocs.netlify.app/.
+Fav Crypto is a stateless API written in native Golang (without packages) that allows users to upvote their favorite cryptocurrency. It has a containerized Postgres database, making data persistent. You can check the documentation(and interact with the backend) at https://fcdocs.netlify.app/.
 
 ## Tech used
 
@@ -40,19 +40,20 @@ VALUES
 
 ## Endpoints
 
-- [GET https://gofa-4wgfen3n5q-rj.a.run.app/getcoins/](https://gofa-4wgfen3n5q-rj.a.run.app/getcoins/)
+- [GET https://gohst-4wgfen3n5q-rj.a.run.app/getcoins/](https://gofa-4wgfen3n5q-rj.a.run.app/getcoins/)
   - Retrieves all coins in the database, along with their upvote counts and updated prices. It uses the klever.io API to fetch the prices (using the Symbol-USDT tickers).
   * Possible outcomes: 200 (Status OK), 405 (Method not allowed).
-- [GET https://gofa-4wgfen3n5q-rj.a.run.app/](https://gofa-4wgfen3n5q-rj.a.run.app/)
+- [GET https://gohst-4wgfen3n5q-rj.a.run.app/](https://gohst-4wgfen3n5q-rj.a.run.app/)
   - Checks if the server is running.
   * Possible outcomes: 200 (Status OK), 405 (Method not allowed).
-- `PATCH https://gofa-4wgfen3n5q-rj.a.run.app/upvote/:symbol` - Increments the symbol given by one in the database. (Insomina, Postman)
-  - Symbols: KLV, BTC, ETH, ENJ, BNB, LTC, APE, LINK, DOGE, TRX.
-  - Possible outcomes: 200 (Status OK), 404 (Coin not found), 405 (Method not allowed).
+- `PATCH https://gohst-4wgfen3n5q-rj.a.run.app/upvote/:symbol`
+  - Increments the symbol given by one in the database. You can use Insomina, Postman or interact with it in [here](https://fcdocs.netlify.app/)
+  * Symbols: KLV, BTC, ETH, ENJ, BNB, LTC, APE, LINK, DOGE, TRX.
+  * Possible outcomes: 200 (Status OK), 404 (Coin not found), 405 (Method not allowed).
 
 ## How to use endpoints
 
-Use your favorite client (Insomnia or Postman) to access the endpoints. For the GET request, you can access our docs and try it there at https://fcdocs.netlify.app/.
+Use your favorite client (Insomnia or Postman) to access the endpoints. You can also interact with the back-end from [here](https://fcdocs.netlify.app/).
 
 ## Tests
 
