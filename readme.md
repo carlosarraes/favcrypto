@@ -12,6 +12,14 @@ The API is hosted on Google Cloud Run and uses Golang:1.20.1-alpine3.17. The dat
 
 The initial database was written in SQL. There is also a Dockerfile in /data/ so that the database can be changed from ElephantSQL to another host if desired.
 
+<table align="center">
+<tr>
+<th>PostgreSQL</th>
+<th>Dockerfile</th>
+</tr>
+<tr>
+<td>
+
 ```sql
 CREATE SCHEMA IF NOT EXISTS Currency;
 
@@ -37,6 +45,28 @@ VALUES
   (0, 'Dogecoin', 'DOGE', 0),
   (0, 'TRON', 'TRX', 0);
 ```
+</td>
+<td>
+
+```
+FROM postgres:latest
+
+ENV POSTGRES_USER=root \
+    POSTGRES_PASSWORD=password \
+    POSTGRES_DB=mydb
+COPY init.sql /docker-entrypoint-initdb.d/
+
+VOLUME /var/lib/postgresql/data
+
+EXPOSE 5432
+
+CMD ["postgres"]
+```
+</td>
+</tr>
+</table>
+
+
 
 ## Endpoints
 
